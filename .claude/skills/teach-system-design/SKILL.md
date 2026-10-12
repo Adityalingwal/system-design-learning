@@ -54,7 +54,7 @@ Paths resolve from the workspace root; `*-FORMAT.md` links resolve from this ski
    - **Weekday** → the next unfinished topic(s) of the current phase in the Order. Respect dependencies: never teach a topic whose foundations (earlier phase) are not done; say so if he asks to jump ahead and offer the missing foundation first.
    - **Sunday** → the next LLD step on the Sunday track (14A/14B concepts in order, then 15B problems).
    - **Phase just finished** → that Sunday: LLD first, then the phase's design-doc milestone.
-   Tell him in one line what today is and why, then go.
+   Tell him in one line what today is and why, **plus the recommended model** (see Model choice), then go.
 4. **Teach with the loop** for each topic:
    1. **Lesson** — write `lessons/NNNN-slug.html` (see Lessons) and open it (`open <path>`).
    2. **Source** — point to 1 primary source from `RESOURCES.md` (chapter/section or page).
@@ -62,6 +62,18 @@ Paths resolve from the workspace root; `*-FORMAT.md` links resolve from this ski
    4. **Practice** — by tag (see above). For a 🟢 build: agree the spec in chat, he writes the code, you review.
    5. **Spacing** — add the new facts to `REVIEW.md`.
 5. **Write back:** update `PROGRESS.md`; add learning records only on real evidence; promote earned terms to `GLOSSARY.md`; create or extend a `reference/` sheet when a cluster of topics completes.
+
+## Model choice
+
+Aditya switches models in the app's model picker. At the start of every session (and whenever the work type changes mid-session, or he asks) recommend one, with a one-line reason. If the current model is not the recommended one, say so once — never block on it.
+
+| Work | Model |
+|---|---|
+| Daily lessons, quizzes, recall, HTML pages — P0, P1, P2 basics, P3 queues, P4, P5, 14A concepts | **Sonnet 5.5** |
+| Hard distributed topics: replication, consistency models, isolation levels, Section 5 (consensus, saga, distributed locks, exactly-once) | **Opus 5.5** |
+| P6: LLM/AI + Voice AI (many 🟢 trade-offs, fast-changing field) | **Opus 5.5** |
+| 14B concurrency, any LLD code review (Sundays) | **Opus 5.5** |
+| Design doc reviews (phase milestones), or when he is stuck twice on the same idea | **Opus 5.5** |
 
 ## LLD sessions (Sunday)
 
