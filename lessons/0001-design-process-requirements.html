@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Process: Boxes Se Pehle</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main>
+<p class="meta">Lesson 0001 · P0 Design Process · Section 12 · <span class="tag-deep">Deep</span></p>
+<h1>Boxes banane se pehle kya karte hain</h1>
+<p class="subtitle">Har design ka ek standard raasta: requirements → estimation → entities → API → boxes → deep dives.</p>
+
+<h2>Problem: boxes pehle, sawaal baad mein</h2>
+<p class="hi">Maan lo assignment mila: <em>"Ek voice agent platform design karo."</em> Pehla instinct hota hai seedha diagram kholna: LiveKit, STT, LLM, TTS, Redis, Postgres, Kafka... 20 minute mein 12 boxes ban gaye. Phir koi poochhta hai: "Ye kitne callers handle karega? Reply kitni der mein aana chahiye? Call ka data kitne din rakhna hai?" Aur tab samajh aata hai ki tumne <b>ek unknown problem ka solution</b> bana diya.</p>
+<p class="hi">Wajah simple hai: <b>boxes requirements se aate hain.</b> Ek voice agent jo din mein 5 calls leta hai aur ek jo 5,000 calls ek saath leta hai &mdash; dono ka design bilkul alag hoga. Bina poochhe tum pehla bana rahe ho ya doosra, pata hi nahi.</p>
+
+<h2>Idea: ek fixed raasta</h2>
+<p class="hi">Design ko ek line mein todte hain. Har step ka ek <b>output</b> hai, aur har output agle step ka input banta hai.</p>
+
+<pre class="diagram">
+ 1. Requirements        "Kya banana hai? Kitna achha chahiye?"
+        |
+ 2. Estimation          "Kitna bada? Ek machine kaafi ya kai?"   (sirf jab design badle)
+        |
+ 3. Core entities       "Kin cheezon ki baat ho rahi hai?"       User, Call, Appointment
+        |
+ 4. API                 "Bahar se system se kya maanga jaata hai?"
+        |
+ 5. High-level design   "Boxes + arrows: har API ka request path"
+        |
+ 6. Deep dives          "Kya dheema hoga? Kya tootega? 10x pe kya?"
+</pre>
+
+<table>
+<tr><th>Step</th><th>Output</th><th>Source ka example (Twitter)</th></tr>
+<tr><td>1 Requirements</td><td>Top 3 functional + 3-5 non-functional, numbers ke saath</td><td>post tweet · follow · see feed; &ldquo;feed &lt; 200ms&rdquo;</td></tr>
+<tr><td>2 Estimation</td><td>Sirf wo numbers jo design badalte hain</td><td>(lesson 2)</td></tr>
+<tr><td>3 Core entities</td><td>Nouns ki chhoti list</td><td>User, Tweet, Follow</td></tr>
+<tr><td>4 API</td><td>Endpoints = contract</td><td><code>POST /v1/tweets</code>, <code>GET /v1/feed</code></td></tr>
+<tr><td>5 High-level design</td><td>Boxes + arrows; DB fields yahin likhte hain</td><td>client → server → DB</td></tr>
+<tr><td>6 Deep dives</td><td>Bottleneck, edge case, failure fix</td><td>fanout-on-read vs fanout-on-write</td></tr>
+</table>
+<p class="sidenote">Source: <a href="https://www.hellointerview.com/learn/system-design/in-a-hurry/delivery">Hello Interview, Delivery Framework</a>. Wahan minute-wise timing bhi hai, wo interview ke liye hai. Hum timer nahi use kar rahe; hume order aur har step ka output chahiye.</p>
+
+<h2>Step 1 gehra: requirements</h2>
+<p class="hi">Ye sabse zaroori step hai, kyunki baaki sab ispe tika hai. Isse do hisson mein todte hain.</p>
+
+<h3>Functional: "system kya kare"</h3>
+<p class="hi">"User ye kar sake" jaise statements. Source ke hisaab se <b>top 3</b> chuno. Lambi list tumhe nuksaan karti hai, kyunki saare features ka design karna possible hi nahi. Prioritize karna khud ek skill hai.</p>
+
+<h3>Non-functional: "system kitna achha ho"</h3>
+<p class="hi">Ye system ki <b>quality</b> hai: speed, availability, data safety. Do rules:</p>
+<ol class="steps hi">
+<li><b>Number lagao.</b> "Low latency" kuch nahi bolta, har system ko low latency chahiye. "Search results 500 ms ke andar" ek target hai, aur batata hai ki system ka kaunsa hissa sabse zyada matter karta hai.</li>
+<li><b>Top 3-5 hi chuno.</b> Neeche ki checklist se wo chuno jo <em>is</em> system ke liye sabse zyada matter karti hain.</li>
+</ol>
+
+<table>
+<tr><th>Checklist</th><th>Sawaal (simple shabdon mein)</th></tr>
+<tr><td>CAP</td><td>Gadbad ho to purana data chalega ya system rukna chahiye?</td></tr>
+<tr><td>Environment</td><td>Kahan chalega? Mobile (battery), kamzor network?</td></tr>
+<tr><td>Scalability</td><td>Traffic achanak badhta hai? Reads zyada ya writes?</td></tr>
+<tr><td>Latency</td><td>Kaun si request kitni jaldi jawab de?</td></tr>
+<tr><td>Durability</td><td>Data kho gaya to kitna bada nuksaan?</td></tr>
+<tr><td>Security</td><td>Kaun kya dekh sakta hai? Data protection?</td></tr>
+<tr><td>Fault tolerance</td><td>Ek hissa toote to baaki chalta rahe?</td></tr>
+<tr><td>Compliance</td><td>Koi kanoon ya regulation?</td></tr>
+</table>
+<p class="sidenote">Checklist Hello Interview ke Delivery Framework se hai. Simple-language sawaal mere hain. CAP abhi sirf naam hai; uska poora lesson P3 mein aayega.</p>
+
+<h3>Worked example: tumhari duniya se</h3>
+<p class="hi">Problem: <em>"Ek clinic ke liye voice agent, jo phone pe appointment book kare."</em></p>
+<div class="card">
+<p><b>Functional (top 3)</b></p>
+<ul>
+<li>Caller appointment book kar sake</li>
+<li>Caller appointment reschedule ya cancel kar sake</li>
+<li>Agent na samjhe to call human ko transfer ho jaaye</li>
+</ul>
+<p><b>Non-functional (example numbers, <mark>maine assume kiye hain, fact nahi</mark>)</b></p>
+<ul>
+<li><b>Latency:</b> caller bolna band kare, uske ~1 second ke andar agent ka jawab sunai dena shuru ho</li>
+<li><b>Scalability:</b> 200 calls ek saath, subah 9-11 baje peak</li>
+<li><b>Durability:</b> confirm ho chuka appointment kabhi lost nahi hona chahiye</li>
+<li><b>Compliance:</b> call recording aur patient ka data sensitive hai, consent chahiye</li>
+</ul>
+</div>
+<p class="hi">Dekho kya hua: "200 concurrent calls" ne tay kar diya ki ek server se kaam nahi chalega. "Appointment kabhi lost nahi" ne tay kar diya ki booking ek durable database mein jaayegi, sirf memory mein nahi. <b>Boxes ab apne aap sawaal ban gaye.</b></p>
+
+<h2>Estimation: kab, kaise (preview)</h2>
+<p class="hi">Estimation ka matlab hai thoda hisaab lagana: kitni requests/second, kitna storage. Source ka rule: <b>sirf tab karo jab result design badle.</b> "Bahut saari traffic hai, ok" nikalne ka koi faayda nahi. Agar answer ye decide karta hai ki ek machine kaafi hai ya kai chahiye, tab karo. Ye hamari <a href="../NOTES.md">NOTES</a> ke "math tabhi karo jab design badle" se match karta hai. Kaise karte hain, wo agla lesson hai (numbers to know ke saath).</p>
+
+<h2>Trade-offs</h2>
+<div class="card tradeoff">
+<p class="hi"><b>Pehle simple design, phir complexity (deep dives mein).</b> Plus: ek poora chalne wala design jaldi mil jaata hai, aur complexity wahin judti hai jahan requirement maangti hai. Minus: pehla diagram "adhoora" lagta hai. Source ki salah: cache ya queue jaisi jagah dikhe to ek chhota note likho aur aage badho.</p>
+</div>
+<div class="card tradeoff">
+<p class="hi"><b>Kam requirements vs zyada requirements.</b> Kam: focus rehta hai, design poora hota hai. Zyada: lagta hai "complete soch rahe ho", par kuch bhi gehraai se nahi ho paata. Hum kam chunte hain aur baaki ko khud bolke "out of scope" kehte hain.</p>
+</div>
+
+<h2>Aam galtiyan</h2>
+<div class="card pitfall">
+<p class="hi"><b>1. Vague requirement.</b> "System fast aur scalable hona chahiye" &mdash; kisi kaam ka nahi. Number lagao, aur batao kaunsa hissa.</p>
+</div>
+<div class="card pitfall">
+<p class="hi"><b>2. Seedha boxes.</b> Requirements ke bina component list banana. Har box ke peeche ek requirement hona chahiye; na ho to wo box hataao.</p>
+</div>
+<div class="card pitfall">
+<p class="hi"><b>3. Pehle hi complexity.</b> Kafka, sharding, multi-region, sab pehle diagram mein daal dena. Isse design kabhi poora nahi hota.</p>
+</div>
+<div class="card pitfall">
+<p class="hi"><b>4. API mein user ID body se lena.</b> Current user hamesha auth token se aata hai, request body se nahi, warna koi bhi dusre ke naam se kaam kar sakta hai. (Source ki API wali baat.)</p>
+</div>
+
+<h2>Yaad rakhne wali baatein</h2>
+<p class="sidenote">"Text chhupao" dabao, phir apne shabdon mein bolo (chat mein, Hinglish chalega). Check karne ke liye dikhao.</p>
+<div class="card script">
+<p><span class="tag">Order</span><br>Requirements → estimation (agar design badle) → core entities → API → high-level design → deep dives.</p>
+<p><span class="tag">Functional</span><br>Top 3 "user ye kar sake". Lambi list nahi.</p>
+<p><span class="tag">Non-functional</span><br>Top 3-5, number ke saath, aur is system ke hisaab se chune hue.</p>
+<p><span class="tag">Rule</span><br>Har box kisi requirement ki wajah se hai. Complexity deep dives mein aati hai.</p>
+</div>
+
+<h2>Quick quiz</h2>
+<div class="quiz" data-answer="2" data-why="Boxes aur technology requirements se aate hain, isliye pehle wahi tay hoti hain.">
+<div class="q">1. Tumhe "WhatsApp jaisa chat system" mila. Sabse pehla kaam kya hai?</div>
+<button>Database chuno aur saare tables aur columns pehle hi final kar do</button>
+<button>Kafka aur Redis jaise components ki list banao design mazboot dikhane ko</button>
+<button>Top features aur numbers wale quality goals tay karo, phir aage badho</button>
+<button>Server count nikalo aur turant sharding ka poora plan final kar do</button>
+<div class="why"></div>
+</div>
+
+<div class="quiz" data-answer="0" data-why="Isme number hai aur ye batata hai ki search wala hissa latency ke liye critical hai.">
+<div class="q">2. Inme se kaunsa non-functional requirement achhe se likha hua hai?</div>
+<button>The system should return search results in under 500 ms for typical queries</button>
+<button>The system should be highly performant and handle heavy load very smoothly</button>
+<button>The system should be modern, cloud native, and built on microservices only</button>
+<button>The system should have good user experience and minimal delays everywhere</button>
+<div class="why"></div>
+</div>
+
+<div class="quiz" data-answer="1" data-why="Math ka maksad design decision hai, hisaab lagana apne aap mein faayda nahi.">
+<div class="q">3. Back-of-envelope estimation kab karni chahiye?</div>
+<button>Hamesha sabse pehle, taaki dikhe ki tumhe QPS aur storage nikalna aata hai</button>
+<button>Jab result se design decision badle, jaise ek machine kaafi ya kai chahiye</button>
+<button>Kabhi nahi, kyunki launch se pehle real traffic ka andaaza lagana namumkin hai</button>
+<button>Sirf aakhir mein, jab diagram final ho chuka ho aur kuch badalna na ho</button>
+<div class="why"></div>
+</div>
+
+<h2>Ab source padho</h2>
+<ol class="steps hi">
+<li><a href="https://www.hellointerview.com/learn/system-design/in-a-hurry/delivery">Hello Interview: Delivery Framework</a>. Sections: <i>Requirements</i> (functional, non-functional, capacity estimation), <i>Core Entities</i>, <i>API or System Interface</i>, <i>High Level Design</i>, <i>Deep Dives</i>. Free hai. Minute wale numbers ignore karo.</li>
+<li>Optional 💰: Alex Xu, <i>System Design Interview</i> Vol 1, framework wala chapter (<code>RESOURCES.md</code> mein Section 12 ki row).</li>
+<li><a href="../NOTES.md">NOTES.md</a> ka "Senior level pe kya expect hota hai": points 2, 3, 4 abhi ke liye relevant hain.</li>
+</ol>
+
+<div class="ask">
+<b>Sawaal ho to poochho.</b> Kuch bhi samajh na aaye (kisi term ka matlab, example, "ye box kyun") to chat mein pooch lo. Source band karke apne shabdon mein batana agla step hai.
+</div>
+</main>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/hide-text.js"></script>
+</body>
+</html>

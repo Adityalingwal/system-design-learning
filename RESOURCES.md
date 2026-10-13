@@ -43,6 +43,8 @@ Checked on 2026-10-12 (research gap-check: Claude + Codex, web-verified). Paid k
   Use for: Sections 6, 7, 9 (reliability, cost, security pillars).
 - [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/)
   Use for: SLO/SLI/error budget (Sec 7).
+- [ISO/IEC 25010: software quality model](https://iso25000.com/en/iso-25000-standards/iso-25010)
+  Non-functional qualities ki poori list (9 groups + sub-parts). Use for: Sec 12 requirements; hamari sheet: `reference/quality-checklist.md`.
 
 ## AI / LLM specific (Section 11B)
 
