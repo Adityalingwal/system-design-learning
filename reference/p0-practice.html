@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P0 Notes &amp; Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F3F6;--surface:#FFFFFF;--ink:#1B1F2A;--muted:#667085;--line:#D8DBE3;
+  --chip-bg:#E9EBF0;--chip-ink:#3C4353;--accent:#2F6FEB;--bad:#E5484D;--bad-bg:#FDECEC;--good:#1E9E6A;
+  --quote-bg:#F6F7FA;--code-bg:#E9EBF0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171C;--surface:#1E2128;--ink:#E8EAF0;--muted:#9AA0AE;--line:#2E323B;
+    --chip-bg:#2A2E37;--chip-ink:#C7CBD5;--bad-bg:#2C1B1D;--quote-bg:#252932;--code-bg:#2A2E37;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171C;--surface:#1E2128;--ink:#E8EAF0;--muted:#9AA0AE;--line:#2E323B;
+  --chip-bg:#2A2E37;--chip-ink:#C7CBD5;--bad-bg:#2C1B1D;--quote-bg:#252932;--code-bg:#2A2E37;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.62;padding:16px 16px 48px;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01";overflow-wrap:anywhere}
+.wrap{max-width:820px;margin:0 auto}
+h1,h2,.mdh3,.qa h3.q{font-family:"Fraunces",Georgia,serif;font-optical-sizing:auto}
+.eyebrow,.tag{font-family:"Inter",system-ui,sans-serif}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em;line-height:1.2}
+.sub{color:var(--muted);font-size:14px;margin:0 0 6px}
+.rel{font-size:13px;color:var(--muted);margin:0 0 12px}
+a{color:var(--accent)}
+code{font-family:"JetBrains Mono",Menlo,monospace;font-size:.9em;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+button{font:inherit;color:inherit}
+.tabs{display:flex;gap:6px;margin:8px 0 14px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;font-weight:600;cursor:pointer;color:var(--muted);margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* shared chips */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip,.toc a{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;text-decoration:none;color:var(--chip-ink);background:var(--chip-bg);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.chip i,.toc a i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--muted));display:inline-block}
+.chip.on{background:var(--surface);border-color:var(--ink);color:var(--ink)}
+
+/* notes */
+.toc{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+.sec{margin:22px 0 0;scroll-margin-top:56px}
+.sec h2{font-size:20px;margin:0 0 10px;padding-top:10px;border-top:4px solid var(--c);display:flex;align-items:center;gap:10px}
+.num{background:var(--c);color:#fff;border-radius:6px;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.qa{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px;padding:12px 14px;margin:0 0 10px}
+.qa h3.q,.card .q{font-size:15.5px;font-weight:600;margin:0 0 6px;line-height:1.4}
+.a p{margin:6px 0}
+.a p.core{font-size:15px}
+.a p.arrow{color:var(--muted);font-size:14px}
+.a ol{margin:6px 0;padding-left:22px}
+.a li{margin:2px 0}
+.line{margin:6px 0;font-size:14px;color:var(--chip-ink)}
+.line em:first-child{font-style:normal;font-weight:600;font-family:"Inter",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;color:var(--muted)}
+.line.english{background:var(--quote-bg);border-left:3px solid var(--c);padding:6px 10px;border-radius:0 6px 6px 0;font-style:italic}
+.line.english em:first-child{font-style:normal}
+.line.example{padding-left:10px;border-left:3px solid var(--line)}
+.line.hook{background:var(--chip-bg);padding:6px 10px;border-radius:6px}
+.line.note,.line.watch,.line.trick{border-left:3px solid #E0B000;padding:2px 10px}
+.line.rule{border-left:3px solid var(--good);padding:2px 10px;font-weight:600}
+.tw{overflow-x:auto;margin:8px 0;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--chip-bg);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+.foot{color:var(--muted);font-size:13px}
+
+
+/* md notes */
+.intro{margin-bottom:6px}
+.intro .mdh1{font-size:20px;margin:6px 0 8px}
+.mdh3{font-size:18px;margin:22px 0 8px;padding-left:10px;border-left:4px solid var(--c)}
+#tab-notes p{margin:8px 0}
+#tab-notes ul,#tab-notes ol{margin:8px 0;padding-left:22px}
+#tab-notes li{margin:4px 0}
+#tab-notes hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+pre.diagram{font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:1.45;white-space:pre;overflow-x:auto;max-width:100%;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c,var(--accent));border-radius:6px;padding:10px 12px;margin:10px 0;tab-size:4}
+blockquote{margin:10px 0;padding:6px 12px;background:var(--quote-bg);border-left:3px solid var(--c,var(--accent));border-radius:0 6px 6px 0}
+blockquote p{margin:4px 0!important;font-style:italic}
+
+/* practice */
+.use{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin:0 0 10px;font-size:14px}
+.bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.on{border-color:var(--bad);color:var(--bad)}
+.count{font-family:"JetBrains Mono",Menlo,monospace;font-size:12.5px;color:var(--muted);margin-left:auto}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-left:5px solid var(--line);border-radius:8px;padding:10px 14px 12px;margin:0 0 10px;cursor:pointer}
+.card:hover{border-color:var(--ink);border-top-color:var(--c)}
+.card.yes{border-left-color:var(--good)}
+.card.no{border-left-color:var(--bad);background:var(--bad-bg)}
+.tag{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.card .a{transition:filter .15s}
+.card:not(.revealed) .a{filter:blur(6px);user-select:none;pointer-events:none}
+.card .marks{display:none;gap:8px;margin-top:10px}
+.card.revealed .marks{display:flex}
+.mk{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:4px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.mk.y:hover,.mk.y.sel{border-color:var(--good);color:var(--good)}
+.mk.n:hover,.mk.n.sel{border-color:var(--bad);color:var(--bad)}
+.empty{color:var(--muted);padding:16px 0}
+
+@media print{
+  body{background:#fff;color:#000;padding:0;font-size:12px}
+  .tabs,.toc,#tab-practice,.use{display:none!important}
+  #tab-notes{display:block!important}
+  .qa,pre.diagram,blockquote{break-inside:avoid}
+  pre.diagram{white-space:pre-wrap}
+  .card:not(.revealed) .a{filter:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">System design · P0</div>
+  <h1>P0 Notes &amp; Practice</h1>
+  <p class="sub">Notes = read · Practice = say the answer out loud first, then tap to check.</p>
+</header>
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" id="t-notes" data-tab="notes" aria-selected="true">Notes</button>
+  <button class="tab" role="tab" id="t-practice" data-tab="practice" aria-selected="false">Practice</button>
+</div>
+
+<main id="tab-notes" role="tabpanel">
+  <nav class="toc" aria-label="Sections"><a href="#s1" style="--c:#2F6FEB"><i></i>1 Design process</a><a href="#s2" style="--c:#1E9E6A"><i></i>2 Requirements</a><a href="#s3" style="--c:#E0870B"><i></i>3 Trade-offs</a><a href="#s4" style="--c:#8B5CF6"><i></i>4 Bottlenecks</a><a href="#s5" style="--c:#E5484D"><i></i>5 Failure thinking</a><a href="#s6" style="--c:#0E9AA7"><i></i>6 10x & YAGNI</a><a href="#s7" style="--c:#C2478A"><i></i>7 Estimation</a><a href="#s8" style="--c:#6B7A90"><i></i>8 Design doc</a></nav>
+  <div class="intro"><h2 class="mdh mdh1">P0 Notes — Design Process + Estimation</h2>
+<p>These are the full P0 notes. Each topic has a <strong>plain explanation</strong>, a <strong>diagram</strong>, <strong>voice-agent examples</strong>, <strong>common mistakes</strong>, and <strong>how to say it in English</strong>. Everything we learned in chat during the hard-mode revision (20–22 Oct 2026) is here in one place. This file alone is enough to understand the topic.<br>For Q/A practice only: p0-model-answers.md. Example numbers are made up to explain the idea, unless a source is given.</p>
+<p><strong>Example world:</strong> we run a voice-agent platform. Clinics (our business customers) use our agent; a patient calls, the agent books an appointment, and the clinic sees its calls and bookings on its dashboard.</p>
+<hr></div><section id="s1" class="sec" style="--c:#2F6FEB"><h2><span class="num">1</span>Design process — 6 steps</h2><pre class="diagram" tabindex="0">1. Requirements      → what to build, and how well
+2. Estimation        → how much load, how much storage (only numbers that change the design)
+3. Core entities     → the main things in the system (Call, Booking, Clinic…)
+4. API               → how the outside world talks to the system
+5. High-level design → boxes + arrows
+6. Deep dives        → the 1–2 riskiest parts, in depth</pre>
+<ul><li><strong>Deep dives</strong> do not mean a long list of edge cases. They mean: pick the <strong>1–2 hardest / riskiest parts</strong> of the design and go deep on them (bottleneck, failure, scaling). This is what interviewers expect at senior level.</li><li><strong>Why does estimation come after requirements?</strong> Because requirements tell us <strong>which numbers matter</strong>. If there is no recording requirement, estimating storage is wasted effort.</li></ul>
+<blockquote><p><strong>English:</strong> "Finally, we pick the two riskiest parts of the design and do deep dives on them."</p><p><strong>English:</strong> "Requirements tell us which numbers matter. If there's no recording requirement, we don't estimate storage."</p></blockquote>
+<hr></section><section id="s2" class="sec" style="--c:#1E9E6A"><h2><span class="num">2</span>Requirements</h2><h3 class="mdh mdh3">2.1 Functional requirement (FR) = WHAT</h3>
+<p>An FR says <strong>what an actor (a user, or another system) can do</strong>. Pattern: <em>"[Actor] should be able to [action]."</em></p>
+<ul><li>✅ "A clinic should be able to view past calls with their evaluation scores." → a capability (something the actor can do)</li><li>❌ "Task = build a dashboard" → this is <strong>our solution</strong>, not an FR. A dashboard is just one way to do it; tomorrow it could be an email report or a CSV. If we put the solution into the FR, we lose the other options.</li></ul>
+<h3 class="mdh mdh3">2.2 Non-functional requirement (NFR) = HOW WELL</h3>
+<blockquote><p><strong>A non-functional requirement says how well the system must do its job — for example, how fast, reliable, secure or cheap to run it is. We write it with a number, so we can check whether we met it.</strong></p></blockquote>
+<ul><li>Speed, reliability, security and cost are only <strong>examples</strong> — not the full list (availability, scalability, privacy… → quality-checklist.md).</li><li>"Clean" or "how it looks" is not an NFR: we can't measure "clean", and the look is UI design.</li><li><strong>Hook:</strong> Functional = <strong>WHAT</strong>. Non-functional = <strong>HOW WELL</strong>. (Careful: don't make the mistake of writing "functional … how well".)</li></ul>
+<h3 class="mdh mdh3">2.3 The 4 parts of a good NFR</h3>
+<p><strong>Every good NFR has all four; only the values change. If even one is missing, we can't check it.</strong></p>
+<div class="tw"><table><thead><tr><th>Part</th><th>Meaning</th><th>Question to find it</th></tr></thead><tbody><tr><td><strong>Quality</strong></td><td>the kind of "how well" we care about: speed, reliability, security…</td><td><em>How well, in what way?</em></td></tr><tr><td><strong>Scope</strong></td><td>which task / part of the system it applies to — often one FR</td><td><em>For which part or task?</em></td></tr><tr><td><strong>Number</strong></td><td>the target that decides pass/fail (a number, or a rule we can test)</td><td><em>How much, exactly?</em></td></tr><tr><td><strong>Condition</strong></td><td><strong>the hardest situation</strong> where the system must still meet the target</td><td><em>Even when what happens?</em></td></tr></tbody></table></div>
+<pre class="diagram" tabindex="0">"The call history page should load in under 2 seconds, even for a clinic that has 10,000 past calls."
+      └─ scope ─────────┘  └quality┘ └─ number ─┘  └──────── condition ────────────┘
+                              (speed)</pre>
+<p><strong>The same structure across three qualities:</strong></p>
+<div class="tw"><table><thead><tr><th>NFR</th><th>Quality</th><th>Scope</th><th>Number</th><th>Condition</th></tr></thead><tbody><tr><td>Call history page should load in under 2 s, even for a clinic with 10,000 past calls</td><td>speed</td><td>call history page</td><td>under 2 s</td><td>10,000 past calls</td></tr><tr><td>The agent should answer 99.9% of incoming calls during clinic hours (9 AM–9 PM)</td><td>availability</td><td>answering calls</td><td>99.9%</td><td>clinic hours</td></tr><tr><td>Only staff of the clinic that owns the recording can play it — even if someone shares the direct link</td><td>security</td><td>playing recordings</td><td>same-clinic <strong>rule</strong></td><td>shared link</td></tr></tbody></table></div>
+<ul><li><strong>Security</strong> often has no number; instead it has a <strong>rule we can check</strong>. That's why "Number" means whatever decides pass/fail.</li><li><strong>Condition</strong> = the hardest situation. For speed, it is load. For availability, it is a time window. For security, it is a tricky case. A condition like "every request" is weak (it only says "always").</li><li><strong>Trick:</strong> add "even when…" / "even if…" to the sentence — whatever comes after it is the condition.</li><li><strong>Number vs condition:</strong> the number tells us <em>what</em> result counts as a pass. The condition tells us <em>when</em> (in which situation) we must still get that result.</li><li><strong>Scope = task:</strong> the scope is often just an FR. The FR says <em>what</em>; the NFR says <em>how well</em> that same task must work.</li></ul>
+<pre class="diagram" tabindex="0">FR:  "Staff should be able to play a call recording."                                         ← WHAT
+NFR: "Only staff of the clinic that owns the recording can play it, even via a shared link."  ← HOW WELL (scope = that FR)</pre>
+<p>The scope should name the task, not the work we do to build it ("build a call list page" ❌ → "loading the call history page" ✅).</p>
+<h3 class="mdh mdh3">2.4 Complaint → NFR (worked example)</h3>
+<p><strong>Complaint:</strong> <em>"The agent says 'booked', but sometimes the booking never shows up on the dashboard."</em></p>
+<ol><li><strong>Quality:</strong> <strong>Reliability</strong> — the system said "done" for something that never happened. (This is the <strong>Wrong</strong> case from failure thinking.)</li><li><strong>Scope:</strong> saving a booking after the agent says "booked".</li><li><strong>Number:</strong> 99% is too low — 1 patient in 100 would reach the clinic and find no slot. <strong>The more one mistake costs, the stricter the number</strong> → <em>every</em> confirmed booking, within 5 s.</li><li><strong>Condition:</strong> "past 1,000 bookings" is wrong (copied from the speed example) — old bookings don't make saving a new one harder. The hard situations are: <strong>100 booking calls at the same time</strong> (peak), the database/API being slow or down, and the call dropping right after the agent says "booked". Use the most realistic hard case in the NFR. List the other cases under <strong>failure modes</strong>.</li></ol>
+<blockquote><p><strong>Final NFR:</strong> "Every booking the agent confirms must appear on the clinic dashboard within 5 seconds — even when 100 booking calls happen at the same time."</p></blockquote>
+<p>Careful: "the dashboard should show which calls were booked" → this is a new <strong>FR</strong> (a new capability), not an NFR.</p>
+<h3 class="mdh mdh3">2.5 FR or NFR? — Break test</h3>
+<pre class="diagram" tabindex="0">Requirement breaks →  the feature STOPS working?               → FR
+                   →  it still works, but BADLY (slow/unsafe)? → NFR</pre>
+<ul><li>"Patient should be able to book" breaks → no booking can happen at all → FR</li><li>"Booking appears within 5 s" breaks → the booking happens, but late → NFR</li></ul>
+<p><strong>Hook:</strong> <strong>"Stops or gets worse?"</strong></p>
+<h3 class="mdh mdh3">2.6 Three buckets</h3>
+<pre class="diagram" tabindex="0">1. Core / In scope   → we build it in v1
+2. Later / Future    → we build it later (v2)
+3. Out of scope      → we don't build it at all</pre>
+<p><strong>Why write "out of scope" down on purpose?</strong></p>
+<ul><li>It stops <strong>scope creep</strong> (the scope slowly grows, and the work never finishes).</li><li><strong>What others will assume:</strong> if we stay silent, the clinic owner assumes "you're adding payments too, right?", and the reviewer thinks we missed it. Once it's written down, everyone can see <strong>it was a decision, not something we forgot.</strong></li></ul>
+<blockquote><p><strong>English:</strong> "For v1, call booking is core. SMS reminders come later. Payments are out of scope — we chose that on purpose."</p></blockquote>
+<hr></section><section id="s3" class="sec" style="--c:#E0870B"><h2><span class="num">3</span>Trade-offs</h2><p><strong>5 parts:</strong></p>
+<pre class="diagram" tabindex="0">1. X over Y        → what we chose, and what we didn't
+2. Because Z       → the reason + EVIDENCE (numbers we measured ourselves)
+3. Downside W      → the cost of X that we accept
+4. Mitigation M    → how we will handle W
+5. Revisit trigger → when we reopen the decision (BEFORE we hit the limit)</pre>
+<p>Hook (suggestion): <strong>Choice, Cause, Cost, Cover, Comeback.</strong></p>
+<p><strong>Example:</strong></p>
+<blockquote><p>"We chose <strong>streaming STT</strong> over <strong>batch STT</strong> because <strong>the agent must start replying while the caller is still speaking</strong>. We measured it: batch added about 1.5 seconds per reply. The downside is <strong>higher cost per minute</strong>. We handle it by <strong>using batch STT for post-call transcripts</strong>. We'll revisit if <strong>STT cost goes above ₹50,000 a month</strong>, or if a batch model takes less than 300 ms."</p></blockquote>
+<p>(STT = speech-to-text. Streaming = text arrives while the caller is still speaking; batch = text arrives only after the audio ends. The numbers are examples.)</p>
+<ul><li><strong>Why evidence?</strong> Without proof, "because" is just an opinion; a number we measured makes it a real decision. Z often comes from an NFR ("reply starts within 1 s"); the evidence proves that claim.</li><li>Set the <strong>revisit trigger</strong> before we hit the limit, so there is time to think and change the plan.</li></ul>
+<hr></section><section id="s4" class="sec" style="--c:#8B5CF6"><h2><span class="num">4</span>Bottlenecks</h2><p><strong>Bottleneck = the slowest or smallest part of the system, which limits the speed or capacity of the whole system.</strong> Like the neck of a bottle: however big the bottle is, water only flows out as fast as the neck allows.</p>
+<pre class="diagram" tabindex="0">Caller → STT (200 ms) → LLM (900 ms) → TTS (300 ms) → reply
+                        ^^^^^^^^^^^^ bottleneck — make STT 2x faster: little gain; make the LLM faster: the reply gets faster</pre>
+<h3 class="mdh mdh3">Bottleneck vs Single point of failure (SPOF)</h3>
+<pre class="diagram" tabindex="0">Bottleneck = the system still RUNS, but this part LIMITS speed/capacity   → slow
+SPOF       = this part has no BACKUP; if it fails, the WHOLE system stops → stop</pre>
+<p>An LLM with only one provider can be both: the slowest part, and a part with no backup. That's why the hook includes "Single" — but the two ideas are different.</p>
+<h3 class="mdh mdh3">Catching it at design time — Slowest, Smallest, Single</h3>
+<div class="tw"><table><thead><tr><th>Word</th><th>Question</th><th>Catches</th></tr></thead><tbody><tr><td><strong>Slowest</strong></td><td>Follow the request from start to end — how long does each step take?</td><td>latency bottleneck</td></tr><tr><td><strong>Smallest</strong></td><td>How much can each part handle at once? Which one handles the least?</td><td>capacity bottleneck</td></tr><tr><td><strong>Single</strong></td><td>Which part has only one copy?</td><td>SPOF + limit</td></tr></tbody></table></div>
+<h3 class="mdh mdh3">Example: capacity</h3>
+<pre class="diagram" tabindex="0">STT 500 · LLM 100 (rate limit) · TTS 300   → system capacity = the smallest = LLM (100)
+LLM raised from 100 → 400                  → now TTS (300) is the bottleneck</pre>
+<ul><li><strong>System capacity = the capacity of its smallest part.</strong></li><li><strong>The bottleneck moves</strong> — fix one, and the next one shows up. Keep measuring.</li><li><strong>Senior point:</strong> 100 LLM slots ≠ 100 calls. The LLM runs only while the agent prepares its reply. While the caller is speaking, the LLM does nothing. To find how many calls fit, use Little's Law.</li></ul>
+<hr></section><section id="s5" class="sec" style="--c:#E5484D"><h2><span class="num">5</span>Failure thinking</h2><h3 class="mdh mdh3">Three questions</h3>
+<pre class="diagram" tabindex="0">1. How can it break?                  → Down · Slow · Wrong
+2. How far does it spread?            → blast radius
+3. How do we notice it, and respond?  → detect + respond</pre>
+<h3 class="mdh mdh3">Down, Slow, Wrong</h3>
+<pre class="diagram" tabindex="0">Down  → the TTS API is down, no response at all
+Slow  → the LLM takes 8 s instead of 900 ms; the caller hears only silence
+Wrong → STT heard "10 o'clock" as "2 o'clock"; the booking is saved at the wrong time</pre>
+<p><strong>Wrong is the most dangerous</strong> — Down and Slow are loud (easy to notice); Wrong is silent (nobody notices). No alert fires, so the damage goes on until a person catches it. So we need extra checks:</p>
+<ul><li><strong>Read</strong> the booking time <strong>back</strong> to the caller ("Tomorrow at 10, is that right?")</li><li><strong>Before</strong> saying "booked", confirm in the DB that the booking was saved</li><li><strong>Evals:</strong> check a sample of calls</li></ul>
+<h3 class="mdh mdh3">Blast radius</h3>
+<p><strong>How much of the system (and how many users) one failure affects.</strong></p>
+<ul><li>20 clinics, <strong>one shared LLM API key</strong>, a spike at one clinic → rate limit → <strong>all 20</strong> clinics down. This is called a <strong>noisy neighbour</strong>.</li><li><strong>How to shrink it — isolate (bulkhead):</strong> a separate key for each clinic (or group), or a per-clinic quota in our own gateway (e.g. max 30 calls at once). Then a spike at one clinic only blocks that clinic. The name comes from ships: a ship is split into separate rooms (compartments), so a hole in one room doesn't sink the whole ship.</li><li>A backup LLM / retry helps with <strong>recovery</strong>, but does <strong>not</strong> shrink the blast radius (the busy clinic will fill up the backup too; and if another clinic has used up the limit, retrying is useless).</li><li><strong>Tenant</strong> = one customer of a shared system (here, each clinic).</li></ul>
+<h3 class="mdh mdh3">The 6 response tools — one story (the LLM call is stuck)</h3>
+<pre class="diagram" tabindex="0">1. Timeout      → no answer in 3 s, assume it's stuck   (this comes first — without it, when would we retry?)
+2. Retry        → try again once or twice (with a limit)
+3. Fallback     → switch to a second LLM provider
+4. Degrade      → keep running with fewer features (fixed script: "Let me take a message, the clinic will call you back")
+5. Save partial → save whatever we already have: the caller's name/number
+6. Fail safe    → end the call politely + alert the team</pre>
+<p>Hook: <strong>Wait → Again → Other → Less → Keep → Close.</strong> (Full name of Degrade: graceful degradation.)</p>
+<blockquote><p><strong>English:</strong> "If the LLM call gets stuck, we time out and retry once. Then we fall back to a second provider. If that also fails, we degrade to a fixed script that just takes a message."</p></blockquote>
+<hr></section><section id="s6" class="sec" style="--c:#0E9AA7"><h2><span class="num">6</span>10x and YAGNI</h2><h3 class="mdh mdh3">10x rule (Jeff Dean)</h3>
+<p><strong>Today's design should handle 10x with small changes; at 100x, expect a redesign.</strong> The rule does not say "build for 10x today".</p>
+<ul><li>50 → 500 calls at once: add workers, raise limits</li><li>50 → 5,000: new architecture (multi-region, our own STT…)</li></ul>
+<h3 class="mdh mdh3">YAGNI — You Aren't Gonna Need It</h3>
+<p>Don't build what you don't need yet. <strong>Test question:</strong> <em>"If we don't build it now, how expensive will it be to add later?"</em></p>
+<pre class="diagram" tabindex="0">CHEAP later     (a change in 1 place)        → don't build it now
+EXPENSIVE later (50 places, data migration)  → build a CHEAP DOOR now</pre>
+<ul><li><strong>LLM wrapper:</strong> a cheap door — a small step now that makes the later change easy. It takes 1 hour: we call the provider through one function. Multi-provider routing = the expensive building; build it only when we reach its revisit trigger.</li><li><strong><code>clinic_id</code> column (1 clinic today):</strong> build it now. Today it is one column. Later it means a full data migration and a filter in every query. Miss it in one place, and <strong>one clinic sees another clinic's calls</strong> (Wrong + security).</li><li><strong>YAGNI ≠ build nothing.</strong> If it's cheap later, skip it for now; if it's expensive later, do it now.</li></ul>
+<hr></section><section id="s7" class="sec" style="--c:#C2478A"><h2><span class="num">7</span>Estimation</h2><h3 class="mdh mdh3">7.1 Peak, not average</h3>
+<p>If we design for the average, the system fails <strong>exactly at the busiest time</strong>. A clinic gets 10 calls per hour on average, but 60 on Monday from 10–11 AM. <strong>Design for 60.</strong></p>
+<h3 class="mdh mdh3">7.2 Storage</h3>
+<pre class="diagram" tabindex="0">bitrate × seconds = bits(kb) → ÷ 8 = bytes(KB) → ÷ 1000 = MB</pre>
+<ul><li>kbps is a <strong>rate</strong>; multiply by seconds → the "per second" cancels out → only <strong>kb</strong> is left.</li><li><strong>÷ 8, not × 8:</strong> 1 byte = 8 bits; a byte is the bigger box → the count gets smaller. (80 rupees in 10-rupee notes → 8 notes.)</li><li><strong>Small b = bits, big B = bytes</strong> — kb and KB differ by 8x.</li></ul>
+<p><strong>Example (phone call, G.711 64 kbps, 5 min):</strong> 64 × 300 = 19,200 kb → ÷ 8 = 2,400 KB → <strong>2.4 MB</strong><br><strong>Example (128 kbps, 1 min) — "divide by 8 first" trick:</strong> 128 ÷ 8 = 16 KB/s → × 60 = 960 KB ≈ <strong>1 MB/min</strong> → 10,000 min ≈ 10 GB.</p>
+<h3 class="mdh mdh3">7.3 Codecs, sample rate, Nyquist</h3>
+<ul><li><strong>Sample rate</strong> = how many times per second we measure the sound (one "photo" each time). <strong>All digital audio has a sample rate</strong> — browser audio too.</li><li><strong>Nyquist rule:</strong> to catch a sound correctly, the sample rate must be at least <strong>2x</strong> the highest frequency → so the highest frequency it can catch is <strong>half</strong> the sample rate.</li></ul>
+<pre class="diagram" tabindex="0">Phone (G.711, Twilio SIP):  8 kHz, 64 kbps  → sound up to ~4 kHz
+Browser (Opus, WebRTC):     up to 48 kHz    → sound up to ~20 kHz (humans hear up to ~20 kHz)</pre>
+<ul><li>"s", "f", "sh" have frequencies above 4 kHz → phone audio cuts them off → "fifteen" and "fifty" sound alike. <strong>STT makes more mistakes on phone calls</strong> (numbers, names) → <strong>read back</strong> the important details.</li><li><strong>Compression ≠ sample rate:</strong> sample rate = how often we measure; compression (Opus) = how much we shrink the measured data.</li></ul>
+<h3 class="mdh mdh3">7.4 Little's Law</h3>
+<p><strong>L = λ × W</strong> — how many are in the system at once = arrival rate × how long each one stays.</p>
+<pre class="diagram" tabindex="0">4 steps: find λ → find W (measure it, or make a good guess) → match units → multiply</pre>
+<ul><li>4 calls/min × 3 min = <strong>12 calls at once</strong> (every call that came in during the last 3 min is still running)</li><li>10 customers/hour × 0.5 hour = 5 inside the shop</li><li>150 QPS × 0.2 s (assumed response time) = <strong>30 requests running at once</strong></li><li>20 LLM req/s × 1.5 s = <strong>30 LLM calls at once</strong> → compare with the provider's limit (= capacity bottleneck check)</li></ul>
+<p>Rules: units must match · works for any system · use peak λ for the busiest time · round up only the final answer.<br><strong>Not the same as peak factor:</strong> peak factor = how much higher the load is at the busiest time than on average; Little's Law = how many at once. First find peak λ, then apply Little's Law.</p>
+<h3 class="mdh mdh3">7.5 QPS</h3>
+<pre class="diagram" tabindex="0">QPS = requests per day ÷ 100,000 (1 lakh; 1 day = 86,400 s ≈ 100,000 s) × peak factor</pre>
+<p>5 million/day ÷ 100,000 = 50 QPS avg × 3 = <strong>150 QPS peak</strong>. The shortcut gives a number about 15% too low. That's fine; we only need the rough size (tens, hundreds or thousands).</p>
+<p><strong>When to use which:</strong></p>
+<pre class="diagram" tabindex="0">Phone call  → lasts minutes, holds the line → "how many are OPEN at once?"   → Little's Law
+API request → done in ms                    → "how many ARRIVE each second?" → QPS</pre>
+<h3 class="mdh mdh3">7.6 Bandwidth</h3>
+<pre class="diagram" tabindex="0">bitrate per stream × streams per call (voice: 2) × calls at once → compare with the network bandwidth</pre>
+<p>64 kbps × 2 × 500 = 64,000 kbps = <strong>64 Mbps = 0.064 Gbps = 6.4% of 1 Gbps</strong> → plenty. Units: kbps ÷1000 Mbps ÷1000 Gbps. Packet headers add a little extra, so keep some spare bandwidth (<strong>headroom</strong>).</p>
+<h3 class="mdh mdh3">7.7 LLM cost</h3>
+<ul><li>1 token ≈ 4 characters ≈ ¾ of a word. Input and output have different prices.</li><li><strong>In multi-turn calls, input is the main cost.</strong> The LLM has no memory, so we resend the full history on every turn:</li></ul>
+<pre class="diagram" tabindex="0">Turn 1:  system prompt + turn 1
+Turn 2:  system prompt + turn 1 + turn 2
+Turn 10: system prompt + turn 1 … turn 10   ← input keeps growing
+Output:  a short reply every turn           ← output stays small</pre>
+<ul><li><strong>Fix: prompt caching</strong> — the repeated part (the system prompt) is charged at a lower price.</li></ul>
+<h3 class="mdh mdh3">7.8 Latency numbers</h3>
+<div class="tw"><table><thead><tr><th>Operation</th><th>Time</th></tr></thead><tbody><tr><td>Read from RAM</td><td>~100 ns</td></tr><tr><td>Read 4 KB from SSD (random)</td><td>~150 µs</td></tr><tr><td>Same data center round trip</td><td>~0.5 ms</td></tr><tr><td>Across the world (California ↔ Netherlands)</td><td>~150 ms</td></tr></tbody></table></div>
+<ul><li>ns → µs → ms → s, each step ×1000. RAM ≈ 1,500× faster than SSD → keep often-used data in RAM (cache).</li><li><strong>Apply:</strong> agent in Europe, LLM in California → <strong>~150 ms extra on every turn</strong> (~450 ms if STT and TTS were in California too). In voice, we have about 1 s for the whole reply → distance alone uses 15% of it.</li><li><strong>Fix: co-locate</strong> — put STT, LLM and TTS in the same region (use the LLM's EU region, or move the agent to the same region as the LLM). "Edge" is a different idea: edge = close to the user; here we need the pipeline parts close to each other.</li></ul>
+<hr></section><section id="s8" class="sec" style="--c:#6B7A90"><h2><span class="num">8</span>Design doc (theory, 13 Oct)</h2><ul><li><strong>When to write one:</strong> when the <strong>decision is hard to undo or affects many people</strong> — not because the system is big.</li><li><strong>Show weak spots in 3 places:</strong> downsides in trade-offs · failure modes · open questions.</li><li><strong>Open question format:</strong> question + owner + blocking/non-blocking + default (what we assume until it's answered) + recommendation.</li><li>Sections + template: design-doc-template.md.</li></ul>
+<hr>
+<p><strong>Next step:</strong> revise on your own (practice page: <code>p0-practice.html</code>) → role-play (gathering requirements) → <code>designs/01-...md</code> → review → P0 done → P1.</p></section>
+</main>
+
+<main id="tab-practice" role="tabpanel" hidden>
+  <div class="use"><b>Say the answer out loud in English first, then tap the card to check. Go over the missed ones again at the end.</b></div>
+  <div class="chips" id="chips"><button class="chip on" data-f="all">All</button><button class="chip" data-f="1" style="--c:#2F6FEB"><i></i>Design process</button><button class="chip" data-f="2" style="--c:#1E9E6A"><i></i>Requirements</button><button class="chip" data-f="3" style="--c:#E0870B"><i></i>Trade-offs</button><button class="chip" data-f="4" style="--c:#8B5CF6"><i></i>Bottlenecks</button><button class="chip" data-f="5" style="--c:#E5484D"><i></i>Failure thinking</button><button class="chip" data-f="6" style="--c:#0E9AA7"><i></i>10x & YAGNI</button><button class="chip" data-f="7" style="--c:#C2478A"><i></i>Estimation</button><button class="chip" data-f="8" style="--c:#6B7A90"><i></i>Design doc</button></div>
+  <div class="bar">
+    <button class="btn" id="toggleAll">Show all</button>
+    <button class="btn" id="shuffle">Shuffle</button>
+    <button class="btn" id="onlyNo">Only missed</button>
+    <button class="btn" id="reset">Reset marks</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+  <div id="cards"><div class="card" id="c1" data-sec="1" data-i="1" tabindex="0" role="button" aria-expanded="false" style="--c:#2F6FEB"><div class="tag">1 · Design process</div><div class="q">What are the 6 steps of a system design, in order?</div><div class="a"><p class="core"><strong>Requirements → Estimation → Core entities → API → High-level design → Deep dives.</strong></p>
+<p>Deep dives = pick the 1–2 riskiest parts and go deep (bottleneck, failure, scaling) — not a list of all edge cases.</p>
+<div class="line english"><em>English:</em> "Finally, we pick the two riskiest parts of the design and do deep dives on them."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c2" data-sec="1" data-i="2" tabindex="0" role="button" aria-expanded="false" style="--c:#2F6FEB"><div class="tag">1 · Design process</div><div class="q">Why does estimation come after requirements?</div><div class="a"><p class="core"><strong>Requirements decide which numbers matter.</strong> We only estimate numbers that can change a design decision.</p>
+<div class="line example"><em>Example:</em> we estimate storage only if we must record calls.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c3" data-sec="2" data-i="3" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">What is a functional requirement (FR)?</div><div class="a"><p class="core"><strong>A functional requirement says what an actor (a user, or another system) should be able to do.</strong> Pattern: <em>"[Actor] should be able to [action]."</em></p>
+<div class="line example"><em>Example:</em> "A clinic should be able to view past calls with their evaluation scores."</div>
+<div class="line watch"><em>Watch out:</em> write what the actor can do, not what we will build ("build a dashboard" is a solution, not an FR).</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c4" data-sec="2" data-i="4" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">What is a non-functional requirement (NFR)?</div><div class="a"><p class="core"><strong>A non-functional requirement says how well the system must do its job — for example, how fast, reliable, secure or cheap to run it is. We write it with a number, so we can check whether we met it.</strong></p>
+<div class="line example"><em>Example:</em> "The call history page should load in under 2 seconds, even for a clinic that has 10,000 past calls."</div>
+<div class="line hook"><em>Hook:</em> Functional = <strong>WHAT</strong>. Non-functional = <strong>HOW WELL</strong>.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c5" data-sec="2" data-i="5" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">What are the 4 parts of a good NFR?</div><div class="a"><p class="core"><strong>Quality · Scope · Number · Condition.</strong> Every good NFR has all four; if one is missing, we can't check it.</p>
+<div class="tw"><table><thead><tr><th>Part</th><th>Meaning</th><th>Question to find it</th></tr></thead><tbody><tr><td>Quality</td><td>The kind of "how well" we care about: speed, reliability, security…</td><td><em>How well, in what way?</em></td></tr><tr><td>Scope</td><td>The task or part of the system it applies to — usually one FR</td><td><em>For which part or task?</em></td></tr><tr><td>Number</td><td>The target that decides pass or fail (a number, or a rule we can test)</td><td><em>How much, exactly?</em></td></tr><tr><td>Condition</td><td>The hardest situation where the system must still meet the target</td><td><em>Even when what happens?</em></td></tr></tbody></table></div>
+<p>Examples:</p>
+<ol><li>"The call history page should load in <strong>under 2 seconds</strong>, even for a clinic with <strong>10,000 past calls</strong>." → speed · call history page · under 2 s · 10,000 past calls</li><li>"The agent should answer <strong>99.9%</strong> of incoming calls <strong>during clinic hours (9 AM–9 PM)</strong>." → availability · answering calls · 99.9% · clinic hours</li><li>"Only staff of the <strong>clinic that owns the recording</strong> can play it — <strong>even if someone shares the direct link</strong>." → security · playing recordings · same-clinic rule · shared link</li></ol>
+<div class="line trick"><em>Trick:</em> add "even when…" / "even if…" — what follows is the condition.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c6" data-sec="2" data-i="6" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">A clinic says: "The agent said 'booked', but the booking is not on the dashboard." Which quality is broken?</div><div class="a"><p class="core"><strong>Reliability</strong> — the system must never say "done" for something that did not happen. This is a "Wrong" failure (see §5).</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c7" data-sec="2" data-i="7" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">Write the NFR for that complaint.</div><div class="a"><p class="core"><strong>"Every booking the agent confirms must appear on the clinic dashboard within 5 seconds — even when 100 booking calls happen at the same time."</strong></p>
+<p class="arrow">→ reliability · saving a confirmed booking · 100% (every), within 5 s · 100 calls at once</p>
+<div class="line rule"><em>Rule:</em> <strong>The more one mistake costs, the stricter the number.</strong></div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c8" data-sec="2" data-i="8" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">How do we tell an FR from an NFR?</div><div class="a"><p class="core"><strong>Break test: if this requirement fails, does the feature <em>stop working</em> (FR) or <em>work badly</em> (NFR)?</strong></p>
+<div class="line example"><em>Example:</em> no booking at all → FR broken; booking shows up late → NFR broken.</div>
+<div class="line hook"><em>Hook:</em> <strong>"Stops or gets worse?"</strong></div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c9" data-sec="2" data-i="9" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">What are the 3 requirement buckets?</div><div class="a"><p class="core"><strong>Core (in scope) · Later (future) · Out of scope.</strong></p>
+<div class="line english"><em>English:</em> "For v1, call booking is core. SMS reminders come later. Payments are out of scope."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c10" data-sec="2" data-i="10" tabindex="0" role="button" aria-expanded="false" style="--c:#1E9E6A"><div class="tag">2 · Requirements</div><div class="q">Why write "out of scope" down explicitly?</div><div class="a"><p class="core"><strong>It stops scope creep, and shows others it was a decision, not something we forgot.</strong></p>
+<div class="line english"><em>English:</em> "Payments are out of scope for v1 — we chose that on purpose."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c11" data-sec="3" data-i="11" tabindex="0" role="button" aria-expanded="false" style="--c:#E0870B"><div class="tag">3 · Trade-offs</div><div class="q">What is the basic trade-off sentence?</div><div class="a"><p class="core"><strong>"We chose X over Y because Z. The downside of X is W. We handle it with M."</strong></p>
+<div class="line example"><em>Example:</em> "We chose streaming STT over batch STT because the agent must start replying while the caller is still speaking. The downside is higher cost per minute. We handle it by using batch STT for post-call transcripts."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c12" data-sec="3" data-i="12" tabindex="0" role="button" aria-expanded="false" style="--c:#E0870B"><div class="tag">3 · Trade-offs</div><div class="q">What makes the "because" strong?</div><div class="a"><p class="core"><strong>Evidence means numbers we measured ourselves that prove our "because".</strong> Without it, a trade-off is just an opinion.</p>
+<div class="line english"><em>English:</em> "We measured it: batch STT added about 1.5 seconds per reply." (example number)</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c13" data-sec="3" data-i="13" tabindex="0" role="button" aria-expanded="false" style="--c:#E0870B"><div class="tag">3 · Trade-offs</div><div class="q">What is a revisit trigger?</div><div class="a"><p class="core"><strong>A clear condition that tells us when to reopen this decision.</strong> Set it <em>before</em> we hit the limit.</p>
+<div class="line example"><em>Example:</em> "We'll revisit if STT cost goes above ₹50,000 a month, or if a batch model takes less than 300 ms."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c14" data-sec="3" data-i="14" tabindex="0" role="button" aria-expanded="false" style="--c:#E0870B"><div class="tag">3 · Trade-offs</div><div class="q">What is the full trade-off format?</div><div class="a"><ol><li><strong>X over Y</strong> — what we chose, what we didn't · 2. <strong>Because Z + evidence</strong> · 3. <strong>Downside W</strong> · 4. <strong>Mitigation M</strong> · 5. <strong>Revisit trigger</strong></li></ol>
+<div class="line hook"><em>Hook (suggestion):</em> <strong>"Choice, Cause, Cost, Cover, Comeback"</strong></div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c15" data-sec="4" data-i="15" tabindex="0" role="button" aria-expanded="false" style="--c:#8B5CF6"><div class="tag">4 · Bottlenecks</div><div class="q">What is a bottleneck?</div><div class="a"><p class="core"><strong>A bottleneck is the slowest or smallest part of a system — it limits the speed or capacity of the whole system.</strong> Fix it, and the next bottleneck shows up.</p>
+<div class="line example"><em>Example:</em> "In our voice pipeline, the LLM is the bottleneck — it takes most of the reply time."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c16" data-sec="4" data-i="16" tabindex="0" role="button" aria-expanded="false" style="--c:#8B5CF6"><div class="tag">4 · Bottlenecks</div><div class="q">Bottleneck vs single point of failure (SPOF)?</div><div class="a"><p class="core"><strong>Bottleneck: the system still works, but this part limits its speed or capacity. SPOF: this part has no backup — if it fails, the whole system stops.</strong></p>
+<div class="line hook"><em>Hook:</em> bottleneck = <strong>slow</strong>, SPOF = <strong>stop</strong>. One part can be both (a single LLM provider).</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c17" data-sec="4" data-i="17" tabindex="0" role="button" aria-expanded="false" style="--c:#8B5CF6"><div class="tag">4 · Bottlenecks</div><div class="q">How do we find bottlenecks at design time?</div><div class="a"><p class="core"><strong>Slowest, Smallest, Single.</strong></p>
+<ol><li>Follow the request from start to end — which step takes the most time? (latency)</li><li>Check each part's capacity. Which part has the lowest capacity? (capacity)</li><li>Look for parts that have only one copy. (SPOF + limit)</li></ol></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c18" data-sec="4" data-i="18" tabindex="0" role="button" aria-expanded="false" style="--c:#8B5CF6"><div class="tag">4 · Bottlenecks</div><div class="q">STT handles 500 streams, LLM 100 requests, TTS 300 streams. Which is the capacity bottleneck?</div><div class="a"><p class="core"><strong>The system's capacity = the capacity of its smallest part.</strong> LLM (100) &lt; TTS (300) &lt; STT (500) → <strong>LLM.</strong></p>
+<div class="line note"><em>Note:</em> 100 LLM slots ≠ 100 calls — a call uses the LLM only while the agent prepares its reply.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c19" data-sec="4" data-i="19" tabindex="0" role="button" aria-expanded="false" style="--c:#8B5CF6"><div class="tag">4 · Bottlenecks</div><div class="q">The LLM limit goes from 100 to 400. Now what?</div><div class="a"><p class="core"><strong>Fixing one bottleneck shows the next one</strong> — now TTS (300). We keep measuring; we don't fix it once and forget.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c20" data-sec="5" data-i="20" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">What are the 3 ways a part can fail?</div><div class="a"><p class="core"><strong>Down, Slow, Wrong.</strong> Down = no response · Slow = response comes too late · Wrong = response looks fine but has a mistake in it.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c21" data-sec="5" data-i="21" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">Which is the most dangerous, and why?</div><div class="a"><p class="core"><strong>Wrong — Down and Slow are loud (easy to notice); Wrong is silent (nobody notices).</strong> No alert fires, so we add our own checks: read the details back to the caller, check the DB before saying "done", run evals.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c22" data-sec="5" data-i="22" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">What is blast radius?</div><div class="a"><p class="core"><strong>How much of the system (and how many users) one failure affects.</strong></p>
+<div class="line english"><em>English:</em> "If the TTS provider goes down, the blast radius is every live call."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c23" data-sec="5" data-i="23" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">20 clinics share one LLM API key. One clinic gets a spike and hits the rate limit. Blast radius?</div><div class="a"><p class="core"><strong>All 20 clinics.</strong> When everyone shares one resource, a sudden traffic spike from one user can stop service for everyone — the <strong>"noisy neighbour"</strong> problem.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c24" data-sec="5" data-i="24" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">How do we shrink that blast radius?</div><div class="a"><p class="core"><strong>Isolate: give each tenant (each clinic) its own limit (separate keys or per-clinic quotas).</strong> This is called a <strong>bulkhead</strong>.</p>
+<div class="line note"><em>Note:</em> fallback and retry help us recover — they don't shrink the blast radius.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c25" data-sec="5" data-i="25" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">What are the 3 questions of failure thinking?</div><div class="a"><ol><li><strong>How can it fail?</strong> — Down, Slow, Wrong · 2. <strong>What is the blast radius?</strong> · 3. <strong>How do we detect it, and how do we respond?</strong></li></ol></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c26" data-sec="5" data-i="26" tabindex="0" role="button" aria-expanded="false" style="--c:#E5484D"><div class="tag">5 · Failure thinking</div><div class="q">What are the 6 tools to respond to a failure, in order?</div><div class="a"><ol><li><strong>Timeout</strong> — decide it's stuck · 2. <strong>Retry</strong> — try again, with a limit · 3. <strong>Fallback</strong> — use a backup · 4. <strong>Degrade</strong> — keep running with fewer features · 5. <strong>Save partial</strong> — keep the data we already have · 6. <strong>Fail safe</strong> — end the call politely and alert the team</li></ol>
+<div class="line hook"><em>Hook (suggestion):</em> <strong>Wait → Again → Other → Less → Keep → Close</strong></div>
+<div class="line english"><em>English:</em> "If the LLM call gets stuck, we time out and retry once. Then we fall back to a second provider. If that also fails, we degrade to a fixed script that just takes a message."</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c27" data-sec="6" data-i="27" tabindex="0" role="button" aria-expanded="false" style="--c:#0E9AA7"><div class="tag">6 · 10x & YAGNI</div><div class="q">What is the 10x rule?</div><div class="a"><p class="core"><strong>Today's design should handle 10x the current load with small changes. At 100x, plan to redesign.</strong> (Jeff Dean's rule of thumb)</p>
+<div class="line example"><em>Example:</em> 50 → 500 calls at once: more workers, higher limits. 50 → 5,000: new architecture.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c28" data-sec="6" data-i="28" tabindex="0" role="button" aria-expanded="false" style="--c:#0E9AA7"><div class="tag">6 · 10x & YAGNI</div><div class="q">What is YAGNI, and how do we decide what to build now?</div><div class="a"><p class="core"><strong>YAGNI = "You Aren't Gonna Need It" — don't build what you don't need yet. Test: "If we don't build it now, how expensive is it to add later?"</strong> Cheap later → skip it for now. Expensive later → build a cheap door now (a small, low-cost step), and the big building later.</p>
+<div class="line example"><em>Example:</em> an LLM wrapper is a cheap door: 1 hour of work, and later changes become easy. Multi-provider routing is the big building.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c29" data-sec="6" data-i="29" tabindex="0" role="button" aria-expanded="false" style="--c:#0E9AA7"><div class="tag">6 · 10x & YAGNI</div><div class="q">With only one clinic today, should every call row have a <code>clinic_id</code>?</div><div class="a"><p class="core"><strong>Yes. It's one column now. Later it means a full data migration, and one clinic could see another clinic's calls.</strong> YAGNI doesn't mean "build nothing".</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c30" data-sec="7" data-i="30" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">Peak load or average load — which do we design for?</div><div class="a"><p class="core"><strong>Peak — a system built for the average fails exactly at the busiest time.</strong></p>
+<div class="line example"><em>Example:</em> average 10 calls/hour, Monday 10–11 AM brings 60. Design for 60.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c31" data-sec="7" data-i="31" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">How much storage does a 5-minute phone call (G.711, 64 kbps) need?</div><div class="a"><p class="core"><strong>bitrate × seconds ÷ 8 = bytes.</strong> 64 kbps × 300 s = 19,200 kb → ÷ 8 = 2,400 KB → ÷ 1,000 = <strong>2.4 MB</strong>.</p>
+<div class="line rule"><em>Rule:</em> small <strong>b</strong> = bits, big <strong>B</strong> = bytes. Bits → bytes: <strong>divide</strong> by 8.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c32" data-sec="7" data-i="32" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">Roughly how much storage does 1 minute of 128 kbps audio take?</div><div class="a"><p class="core"><strong>About 1 MB per minute.</strong> 128 ÷ 8 = 16 KB/s → × 60 = 960 KB ≈ 1 MB. (Divide by 8 first; the numbers stay smaller.)</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c33" data-sec="7" data-i="33" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">What is sample rate?</div><div class="a"><p class="core"><strong>How many times per second we measure the sound.</strong> All digital audio has a sample rate. 8 kHz = 8,000 samples per second.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c34" data-sec="7" data-i="34" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">What is the Nyquist rule?</div><div class="a"><p class="core"><strong>To catch a sound correctly, the sample rate must be at least twice the highest frequency in that sound.</strong> So the highest frequency it can catch is <strong>half</strong> the sample rate.</p>
+<p>Phone (G.711) 8 kHz → up to ~4 kHz. Browser (Opus, WebRTC) up to 48 kHz → up to ~20 kHz.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c35" data-sec="7" data-i="35" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">Why does a phone call sound worse than a browser call, and what does it mean for a voice agent?</div><div class="a"><p class="core"><strong>High sounds like "s", "f", "sh" have frequencies above 4 kHz, so phone audio cuts them off.</strong> "Fifteen" and "fifty" can sound the same → STT makes more mistakes on numbers and names → read important details back to the caller.</p>
+<div class="line note"><em>Note:</em> sample rate (how often we measure) ≠ compression (how much we shrink the data).</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c36" data-sec="7" data-i="36" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">What is Little's Law?</div><div class="a"><p class="core"><strong>Items in a system = arrival rate × time each item stays.</strong> <strong>L = λ × W.</strong></p>
+<p>Rules: units must match · works for any system · use peak λ for the busiest time · round up only the final answer.</p>
+<div class="line examples"><em>Examples:</em> 4 calls/min × 3 min = <strong>12 calls at once</strong>. 10 customers/hour × 0.5 hour = 5 inside. 150 QPS × 0.2 s = 30 requests running at once. 20 LLM req/s × 1.5 s = 30 LLM calls at once → compare with the provider's limit.</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c37" data-sec="7" data-i="37" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">Is Little's Law the same as peak factor?</div><div class="a"><p class="core"><strong>No.</strong> Little's Law = how many are running <strong>at once</strong>. Peak factor = how much higher the load is at the busiest time than on average. First find peak arrivals, then apply Little's Law.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c38" data-sec="7" data-i="38" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">How do we calculate peak QPS?</div><div class="a"><p class="core"><strong>QPS = requests per day ÷ 100,000 (1 lakh; 1 day = 86,400 s ≈ 100,000 s) × peak factor.</strong></p>
+<div class="line example"><em>Example:</em> 5 million/day ÷ 100,000 = 50 QPS × 3 = <strong>150 QPS peak</strong>. (The shortcut gives a number about 15% too low. That's fine; we only need the rough size.)</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c39" data-sec="7" data-i="39" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">When do we use Little's Law and when QPS?</div><div class="a"><p class="core"><strong>For calls that last minutes, use Little's Law: how many are open at once. For API requests that take milliseconds, use QPS: how many arrive per second.</strong></p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c40" data-sec="7" data-i="40" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">How do we estimate bandwidth for voice calls?</div><div class="a"><p class="core"><strong>Bitrate per stream × streams per call × calls at once</strong>, then compare with the network bandwidth.</p>
+<div class="line example"><em>Example:</em> 64 kbps × 2 × 500 = 64,000 kbps = <strong>64 Mbps = 6.4% of 1 Gbps</strong> → enough. Packet headers add a little extra, so keep some spare bandwidth (headroom).</div></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c41" data-sec="7" data-i="41" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">In a multi-turn call, what drives LLM cost — input or output tokens?</div><div class="a"><p class="core"><strong>Input. We resend the system prompt and the whole history on every turn, so input grows each turn while output stays small.</strong> Fix: <strong>prompt caching</strong>.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c42" data-sec="7" data-i="42" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">How big is a token?</div><div class="a"><p class="core"><strong>1 token ≈ 4 characters ≈ ¾ of a word.</strong> Input and output have separate prices.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c43" data-sec="7" data-i="43" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">What are the latency numbers to know?</div><div class="a"><div class="tw"><table><thead><tr><th>Operation</th><th>Time</th></tr></thead><tbody><tr><td>Read from RAM</td><td>~100 ns</td></tr><tr><td>Read 4 KB from SSD (random)</td><td>~150 µs</td></tr><tr><td>Round trip inside one data center</td><td>~0.5 ms</td></tr><tr><td>Round trip across the world (California ↔ Netherlands)</td><td>~150 ms</td></tr></tbody></table></div>
+<p class="core">Units: ns → µs → ms → s, each ×1000. RAM ≈ 1,500× faster than SSD.</p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c44" data-sec="7" data-i="44" tabindex="0" role="button" aria-expanded="false" style="--c:#C2478A"><div class="tag">7 · Estimation</div><div class="q">The agent server is in Europe and the LLM is in California. How much time does the distance add to each turn, and how do we fix it?</div><div class="a"><p class="core"><strong>~150 ms per LLM round trip, every turn</strong> (~450 ms if STT and TTS were in California too). <strong>Fix: co-locate all pipeline parts in one region.</strong></p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c45" data-sec="8" data-i="45" tabindex="0" role="button" aria-expanded="false" style="--c:#6B7A90"><div class="tag">8 · Design doc</div><div class="q">When should we write a design doc?</div><div class="a"><p class="core"><strong>When the decision is hard to undo or affects many people — not because the system is big.</strong></p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c46" data-sec="8" data-i="46" tabindex="0" role="button" aria-expanded="false" style="--c:#6B7A90"><div class="tag">8 · Design doc</div><div class="q">Where does a good doc show its weak spots?</div><div class="a"><p class="core"><strong>Three places: downsides (in trade-offs), failure modes, and open questions.</strong></p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div><div class="card" id="c47" data-sec="8" data-i="47" tabindex="0" role="button" aria-expanded="false" style="--c:#6B7A90"><div class="tag">8 · Design doc</div><div class="q">How do we write an open question?</div><div class="a"><p class="core"><strong>Question + owner + blocking or non-blocking + default (what we assume until answered) + recommendation.</strong></p></div><div class="marks"><button class="mk y" data-m="y">Got it ✓</button><button class="mk n" data-m="n">Missed ✗</button></div></div></div>
+  <p class="empty" id="empty" hidden>No cards match this filter.</p>
+</main>
+</div>
+<script>
+(function(){
+  var TOTAL=47;
+  var marks={}, SKEY='p0practice.marks', TKEY='p0practice.tab';
+  function sget(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function sset(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function sdel(k){try{localStorage.removeItem(k);}catch(e){}}
+  try{var raw=sget(SKEY);if(raw){var o=JSON.parse(raw);if(o&&typeof o==='object')marks=o;}}catch(e){marks={};}
+  var cardsEl=document.getElementById('cards');
+  var cards=[].slice.call(cardsEl.querySelectorAll('.card'));
+  var filter='all', onlyNo=false, allShown=false;
+
+  function saveMarks(){sset(SKEY,JSON.stringify(marks));}
+  function paintCard(c){
+    var m=marks[c.id];
+    c.classList.toggle('yes',m==='y');c.classList.toggle('no',m==='n');
+    c.querySelector('.mk.y').classList.toggle('sel',m==='y');
+    c.querySelector('.mk.n').classList.toggle('sel',m==='n');
+  }
+  function counts(){
+    var y=0,n=0;cards.forEach(function(c){if(marks[c.id]==='y')y++;else if(marks[c.id]==='n')n++;});
+    document.getElementById('count').textContent='Got: '+y+' · Missed: '+n+' · Left: '+(TOTAL-y-n);
+  }
+  function applyFilter(){
+    var shown=0;
+    cards.forEach(function(c){
+      var ok=(filter==='all'||c.dataset.sec===filter)&&(!onlyNo||marks[c.id]==='n');
+      c.hidden=!ok; if(ok)shown++;
+    });
+    document.getElementById('empty').hidden=shown>0;
+  }
+  function setReveal(c,on){c.classList.toggle('revealed',on);c.setAttribute('aria-expanded',on?'true':'false');}
+  function refreshToggleLabel(){document.getElementById('toggleAll').textContent=allShown?'Hide all':'Show all';}
+
+  cards.forEach(function(c){
+    paintCard(c);
+    c.addEventListener('click',function(e){
+      if(e.target.closest('.mk'))return;
+      setReveal(c,!c.classList.contains('revealed'));
+    });
+    c.addEventListener('keydown',function(e){
+      if(e.target!==c)return;
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();setReveal(c,!c.classList.contains('revealed'));}
+    });
+    [].forEach.call(c.querySelectorAll('.mk'),function(b){
+      b.addEventListener('click',function(e){
+        e.stopPropagation();
+        var m=b.dataset.m;
+        if(marks[c.id]===m)delete marks[c.id];else marks[c.id]=m;
+        saveMarks();paintCard(c);counts();applyFilter();
+      });
+    });
+  });
+
+  document.getElementById('chips').addEventListener('click',function(e){
+    var b=e.target.closest('.chip');if(!b)return;
+    filter=b.dataset.f;
+    [].forEach.call(document.querySelectorAll('#chips .chip'),function(x){x.classList.toggle('on',x===b);});
+    cards.sort(function(a,b2){return a.dataset.i-b2.dataset.i;}).forEach(function(c){cardsEl.appendChild(c);});
+    applyFilter();
+  });
+  document.getElementById('toggleAll').addEventListener('click',function(){
+    allShown=!allShown;
+    cards.forEach(function(c){if(!c.hidden)setReveal(c,allShown);});
+    refreshToggleLabel();
+  });
+  document.getElementById('shuffle').addEventListener('click',function(){
+    var vis=cards.filter(function(c){return !c.hidden;});
+    var slots=vis.map(function(c){return cards.indexOf(c);});
+    for(var i=vis.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=vis[i];vis[i]=vis[j];vis[j]=t;}
+    slots.forEach(function(s,k){cards[s]=vis[k];});
+    cards.forEach(function(c){cardsEl.appendChild(c);});
+  });
+  document.getElementById('onlyNo').addEventListener('click',function(){
+    onlyNo=!onlyNo;this.classList.toggle('on',onlyNo);applyFilter();
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    marks={};sdel(SKEY);cards.forEach(paintCard);counts();applyFilter();
+  });
+
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  function showTab(name){
+    tabs.forEach(function(t){t.setAttribute('aria-selected',t.dataset.tab===name?'true':'false');});
+    document.getElementById('tab-notes').hidden=name!=='notes';
+    document.getElementById('tab-practice').hidden=name!=='practice';
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){showTab(t.dataset.tab);sset(TKEY,t.dataset.tab);window.scrollTo(0,0);});});
+  var lt=sget(TKEY);showTab(lt==='practice'?'practice':'notes');
+
+  counts();applyFilter();refreshToggleLabel();
+})();
+</script>
+</body>
+</html>
